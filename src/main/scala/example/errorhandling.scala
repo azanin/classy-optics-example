@@ -1,7 +1,7 @@
 package example
 
 import cats.MonadError
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{ExitCode, IO, IOApp, Sync}
 import com.olegpy.meow.hierarchy._
 import example.errors.NotInterestingTalk
 
@@ -11,10 +11,9 @@ object errorhandling extends IOApp {
     val program1: IO[Unit] = IO.raiseError(NotInterestingTalk)
     //   val program2: IO[Unit] = IO.raiseError(new Exception("Boom"))
 
-    //   val handled = errors.ioSpecificHandle(program1)
+    //val handled = errors.ioSpecificHandle(program1)
 
-    val generalHandled: IO[Unit] =
-      errors.generalHandle(program1, errors.talkErrorHandler)
+    val generalHandled: IO[Unit] = errors.generalHandle(program1, errors.talkErrorHandler)
 
     //   val letExpoled = errors.generalHandle(program2, errors.talkErrorHandler)
 
@@ -38,7 +37,7 @@ object errors {
     me.handleErrorWith(fa)(talkErrorHandler)
   }
 
-  def generalHandle[F[_], A, E <: Throwable](fa: F[A], handler: E => F[A])(
+  def generalHandle[F[_]: Sync, A, E <: Throwable](fa: F[A], handler: E => F[A])(
     implicit me: MonadError[F, E]
   ) = {
     me.handleErrorWith(fa)(handler)

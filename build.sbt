@@ -11,6 +11,7 @@ lazy val catseffect = "org.typelevel" %% "cats-effect" % "2.1.3"
 lazy val root = (project in file("."))
   .settings(
     name := "classyoptics-examples",
+    scalacOptions += "-Xfatal-warnings",
     libraryDependencies ++= Seq(
       compilerPlugin(
         "org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full
